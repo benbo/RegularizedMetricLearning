@@ -8,3 +8,7 @@ load('image_segmentation_data.mat')
 [M num_iter loss] = metric_frob(pairwise_feature,pairwise_labels,ones(n),10^-12,10000,10,0.001,zeros(m))
 %run again after convergence with smaller stepsize
 [M num_iter loss] = metric_frob(pairwise_feature,pairwise_labels,ones(n),10^-13,10000,10,0.001,M)
+
+
+%transfer learning. Example of staying close to identity (i.e. eucledian distance)
+[Mtrans,k,loss] = metric_trace_transfer(pairwise_feature,pairwise_labels,ones(n),10^-13,10000,10,0.001,5,eye(m),M)
