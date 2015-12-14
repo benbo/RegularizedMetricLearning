@@ -1,6 +1,5 @@
 function [M,k,loss] = metric_trace(X,Y,Ytil,stepsize,max_it,lm,eps,M)
     [n,m] = size(X);
-    beta=0.1;
     loss_last = Inf;
     for k = 1:max_it
         V = l_grad(X,Y,Ytil,M,n,m);
