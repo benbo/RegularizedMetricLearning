@@ -1,4 +1,4 @@
-function [M,k loss] = metric_frob_backtracking_naive(X,Y,Ytil,tstart,max_it,lm,eps,M)
+function [M,k loss] = metric_frob_transfer_bn(X,Y,Ytil,tstart,max_it,lm,eps,M)
     %naive backtracking, just minimize smooth part while it dominates
     [n,m] = size(X);
     %initialize metric matrix M
