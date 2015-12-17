@@ -8,9 +8,9 @@ function [M,k loss] = metric_frob_backtracking_naive(X,Y,Ytil,tstart,max_it,lm,e
         t=tstart;
         V = l_grad(X,Y,Ytil,M,n,m) +2*lm*M;
         Z = prox_F(M-t*V,t*lm);
-        g=l_loss(X,Y,Ytil,M,n);
+        g=l_loss(X,Y,Ytil,M,n)+lm*norm(M,'fro')^2;
         %naive, just minimize smooth part
-        while l_loss(X,Y,Ytil,Z,n) > g%+sum(sum(V.*(Z-M)))+t/2*norm(Z-M,'fro')^2
+        while l_loss(X,Y,Ytil,Z,n)+lm*norm(Z,'fro')^2 > g%+sum(sum(V.*(Z-M)))+t/2*norm(Z-M,'fro')^2
             t=t*beta;
             Z = prox_F(M-t*V,t*lm);
         end

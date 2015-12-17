@@ -1,23 +1,22 @@
-function [M,k loss] = metric_trace_backtracking_naive(X,Y,Ytil,tstart,max_it,lm,eps,M)
+function [M,k loss] = metric_frob_backtracking_naive(X,Y,Ytil,tstart,max_it,lm,eps,M)
     %naive backtracking, just minimize smooth part while it dominates
     [n,m] = size(X);
     %initialize metric matrix M
     beta=0.1;
-    loss_last = l_loss(X,Y,Ytil,M,n)+lm*sum(svd(M));
-
+    loss_last = l_loss(X,Y,Ytil,M,n)+lm*norm(M,'fro')^2 + alpha *norm(M-Mt,'fro')^2;
     for k = 1:max_it
         t=tstart;
-        V = l_grad(X,Y,Ytil,M,n,m);
-        Z = prox_tr(M-t*V,t*lm);
-        g=l_loss(X,Y,Ytil,M,n);
-        %naive, just miimize smooth part
-        while l_loss(X,Y,Ytil,Z,n) > g%+sum(sum(V.*(Z-M)))+t/2*norm(Z-M,'fro')^2
+        V = l_grad(X,Y,Ytil,M,n,m) +2*lm*M + 2*alpha*(M-Mt);
+        Z = prox_F(M-t*V,t*lm);
+        g=loss_last;
+        %naive, just minimize smooth part
+        while l_loss(X,Y,Ytil,Z,n) +lm*norm(Z,'fro')^2 + alpha *norm(Z-Mt,'fro')^2 > g%+sum(sum(V.*(Z-M)))+t/2*norm(Z-M,'fro')^2
             t=t*beta;
-            Z = prox_tr(M-t*V,t*lm);
+            Z = prox_F(M-t*V,t*lm);
         end
         %symmtrize since roundoff errors can lead to result not being exactly symmetric
         Mup = (Z+Z')/2;
-        loss = l_loss(X,Y,Ytil,Mup,n)+lm*sum(svd(Mup));
+        loss = l_loss(X,Y,Ytil,Mup,n)+lm*norm(Mup,'fro')^2 +  alpha *norm(Mup-Mt,'fro')^2;
         if loss_last-loss<eps
             if loss_last>loss
                 M=Mup;

@@ -1,6 +1,6 @@
 function [M,k,loss] = metric_trace_transfer(X,Y,Ytil,stepsize,max_it,lm,eps,alpha,Mt,M)
     [n,m] = size(X);
-    loss_last = Inf;
+    loss_last = l_loss(X,Y,Ytil,M,n)+lm*sum(svd(M)) + alpha *norm(M-Mt,'fro')^2;
     for k = 1:max_it
         V = l_grad(X,Y,Ytil,M,n,m) + 2*alpha*(M-Mt);
         Mup = prox_tr(M-stepsize*V,stepsize*lm);
